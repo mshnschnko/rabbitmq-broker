@@ -1,4 +1,12 @@
 .idea/
 .vscode/
+.pytest_cache/
+venv/
+dist/
 build/
-CMakeLists.txt.user
+__pycache__/
+*.egg-info/
+MANIFEST
+*.pyc
+*.log
+.venv
