@@ -18,23 +18,29 @@
     <property name="geometry">
      <rect>
       <x>40</x>
-      <y>20</y>
+      <y>30</y>
       <width>322</width>
-      <height>166</height>
+      <height>141</height>
      </rect>
     </property>
     <layout class="QGridLayout" name="layout">
-     <item row="1" column="1">
-      <widget class="QLineEdit" name="number_line_edit"/>
-     </item>
-     <item row="3" column="1">
+     <property name="bottomMargin">
+      <number>0</number>
+     </property>
+     <property name="horizontalSpacing">
+      <number>10</number>
+     </property>
+     <property name="verticalSpacing">
+      <number>8</number>
+     </property>
+     <item row="4" column="1">
       <widget class="QPushButton" name="multiply_btn">
        <property name="text">
         <string>Удвоить</string>
        </property>
       </widget>
      </item>
-     <item row="1" column="0">
+     <item row="2" column="0">
       <widget class="QLabel" name="number_label">
        <property name="text">
         <string>Число:</string>
@@ -44,10 +50,23 @@
        </property>
       </widget>
      </item>
-     <item row="2" column="0">
+     <item row="3" column="0">
       <widget class="QLabel" name="miltiplied_label">
        <property name="text">
         <string>Удвоенное число:</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="QLineEdit" name="number_line_edit"/>
+     </item>
+     <item row="3" column="1">
+      <widget class="QLabel" name="multiplied_number_label">
+       <property name="text">
+        <string/>
        </property>
        <property name="alignment">
         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
@@ -71,12 +90,18 @@
        </property>
       </widget>
      </item>
-     <item row="2" column="1">
-      <widget class="QLineEdit" name="miltiplied_line_edit">
-       <property name="enabled">
-        <bool>false</bool>
+     <item row="1" column="0" colspan="2">
+      <spacer name="verticalSpacer">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
        </property>
-      </widget>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>40</height>
+        </size>
+       </property>
+      </spacer>
      </item>
     </layout>
    </widget>
