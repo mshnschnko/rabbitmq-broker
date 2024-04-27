@@ -1,5 +1,4 @@
-from server import Interacter
+from server import Server
 
 if __name__ == '__main__':
-    interacter = Interacter()
-    
+    server = Server()

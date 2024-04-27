@@ -28,7 +28,7 @@ class Interacter:
             self.response = response.res
 
 
-    def call(self, n: int):
+    def call(self, n: int) -> int:
         self.response = None
         self.corr_id = str(uuid.uuid4())
 
@@ -46,8 +46,7 @@ class Interacter:
             ),
             body=serialized_message)
         
-        while self.response is None:
-            self.connection.process_data_events(time_limit=3)
+        self.connection.process_data_events(time_limit=3)
         return int(self.response)
 
 

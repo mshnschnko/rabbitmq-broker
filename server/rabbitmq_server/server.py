@@ -3,7 +3,7 @@ import pika
 from proto import Request, Response
 from config import HOST, PORT, RECEIVER_QUEUE, EXCHANGE_NAME, EXCHANGE_TYPE
 
-class Interacter:
+class Server:
     def __init__(self, host: str = HOST, port: str | int = PORT) -> None:
         
         self.connection = pika.BlockingConnection(pika.ConnectionParameters(host=host, port=port))

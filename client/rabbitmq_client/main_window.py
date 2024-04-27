@@ -32,6 +32,6 @@ class MainWindow(QMainWindow):
     def __on_multiply_btn_clicked(self) -> None:
         self.multiply_btn_clicked.emit(self.ui.number_line_edit.text())
 
-    def set_response_number(self, n: int) -> None:
-        self.ui.multiplied_number_label.setText(str(n))
+    def set_response_number(self, n: str) -> None:
+        self.ui.multiplied_number_label.setText(n)
         
