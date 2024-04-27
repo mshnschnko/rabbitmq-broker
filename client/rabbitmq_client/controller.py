@@ -9,5 +9,5 @@ class Controller:
         self.main_window.show()
 
     def __on_multiply_btn_clicked(self, number: str) -> None:
-        result = self.broker_interacter.call(number)
+        result = self.broker_interacter.call(int(number))
         self.main_window.set_response_number(result)
