@@ -1,6 +1,8 @@
 import pika
 import uuid
 
+import pika.exceptions
+
 from proto import Request, Response
 from config import HOST, PORT, SERVER_QUEUE, LOGGER_NAME, WAITING_TIME
 from logger import get_logger
@@ -9,7 +11,9 @@ logger = get_logger(LOGGER_NAME)
 
 class Interacter:
     def __init__(self, host: str = HOST, port: str | int = PORT) -> None:
-        logger.info("Client starting...")
+        logger.info("Connection opening...")
+
+        self.connection = None
         self.connection = pika.BlockingConnection(pika.ConnectionParameters(host=host, port=port))
         logger.info("Connection opened")
         self.channel = self.connection.channel()
@@ -47,21 +51,26 @@ class Interacter:
 
         logger.info(f"Sending request. Server queue: {SERVER_QUEUE}. Client queue: {self.callback_queue}. Request id: {request.id}. Content: {request.req}")
 
-        self.channel.basic_publish(
-            exchange='',
-            routing_key=SERVER_QUEUE,
-            properties=pika.BasicProperties(
-                reply_to=self.callback_queue,
-                correlation_id=self.corr_id,
-            ),
-            body=serialized_message)
-        
-        logger.info(f"Request was sent")
+        try:
+            self.channel.basic_publish(
+                exchange='',
+                routing_key=SERVER_QUEUE,
+                properties=pika.BasicProperties(
+                    reply_to=self.callback_queue,
+                    correlation_id=self.corr_id,
+                ),
+                body=serialized_message)
+            
+            logger.info(f"Request was sent")
 
-        self.connection.process_data_events(time_limit=WAITING_TIME)
+            self.connection.process_data_events(time_limit=WAITING_TIME)
+        except pika.exceptions.AMQPError as e:
+            logger.error(f"Error with message publishing: {e}")
+        
         return int(self.response)
 
 
     def __del__(self) -> None:
-        self.connection.close()
-        logger.info("Connection closed")
+        if self.connection:
+            self.connection.close()
+            logger.info("Connection closed")
