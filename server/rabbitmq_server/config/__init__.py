@@ -10,3 +10,5 @@ EXCHANGE_TYPE = app_config.get('broker', 'exchange_type')
 HOST = app_config.get('broker', 'host')
 
 RECEIVER_QUEUE = app_config.get('receiver', 'queue')
+
+LOGGER_NAME = app_config.get('logger', 'logger_name')
