@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import QMainWindow, QWidget
 from PyQt5.QtGui import QRegularExpressionValidator
 
 from ui.main_window import Ui_MainWindow
-from config_editor import ConfigEditor
+from . import ConfigEditor
 
 
 class MainWindow(QMainWindow):

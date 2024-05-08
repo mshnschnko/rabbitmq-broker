@@ -63,7 +63,13 @@ class Interacter:
             
             logger.info(f"Request was sent")
 
-            self.connection.process_data_events(time_limit=WAITING_TIME)
+            try:
+                waiting_time = int(WAITING_TIME)
+                if waiting_time < 0: waiting_time = None
+            except:
+                waiting_time = None
+            print('TIME IS', waiting_time)
+            self.connection.process_data_events(time_limit=waiting_time)
         except pika.exceptions.AMQPError as e:
             logger.error(f"Error with message publishing: {e}")
         

@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QMessageBox
 
-from main_window import MainWindow
+from widgets import MainWindow
 from broker_interactions import Interacter
 
 from config import SERVER_ERROR_MESSAGE, ERROR_WINDOW_TITLE

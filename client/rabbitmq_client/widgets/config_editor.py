@@ -4,6 +4,23 @@ from PyQt5.QtGui import QRegularExpressionValidator
 
 from ui.config_edit_window import Ui_Config_edit_window
 
+import sys
+import os
+import subprocess
+
+def restart():
+    python = sys.executable
+    os.execl(python, python, *sys.argv)
+
+def restart_with_venv():
+    venv_python = os.path.join(sys.prefix, 'bin', 'python')
+    if sys.platform.startswith('win'):
+        venv_python = os.path.join(sys.prefix, 'Scripts', 'python.exe')
+    subprocess.Popen([venv_python] + sys.argv)
+    sys.exit()
+
+
+
 class ConfigEditor(QWidget):
     def __init__(self, config_path: str, parent: QWidget | None = None) -> None:
         super().__init__(parent)
@@ -26,3 +43,4 @@ class ConfigEditor(QWidget):
         with open(self.config_path, 'w') as confige_file:
             confige_file.write(self.ui.config_edit.toPlainText())
         self.close()
+        restart_with_venv()
