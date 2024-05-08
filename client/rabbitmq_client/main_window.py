@@ -17,7 +17,7 @@ class MainWindow(QMainWindow):
         
         self.ui.settings_btn.clicked.connect(self.__on_settings_btn_clicked)
         
-        regex = QRegularExpression("^[0-9]+$")
+        regex = QRegularExpression("^-?[0-9]+$")
         validator = QRegularExpressionValidator(regex)
         self.ui.number_line_edit.setValidator(validator)
         self.ui.number_line_edit.textChanged.connect(lambda: self.ui.multiply_btn.setEnabled(len(self.ui.number_line_edit.text()) > 0))
