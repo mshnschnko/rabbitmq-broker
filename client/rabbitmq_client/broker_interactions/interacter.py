@@ -2,7 +2,6 @@ import pika
 import uuid
 
 import pika.exceptions
-
 from proto import Request, Response
 from config import HOST, PORT, SERVER_QUEUE, LOGGER_NAME, WAITING_TIME
 from logger import get_logger
@@ -17,9 +16,11 @@ class Interacter:
         self.connection = pika.BlockingConnection(pika.ConnectionParameters(host=host, port=port))
         logger.info("Connection opened")
         self.channel = self.connection.channel()
+        self.channel.queue_declare(queue=SERVER_QUEUE)
+        logger.info(f"Server queue was declarated")
         result = self.channel.queue_declare(queue='', exclusive=True)
         self.callback_queue = result.method.queue
-        logger.info(f"Queue was declarated: {self.callback_queue}")
+        logger.info(f"Client queue was declarated: {self.callback_queue}")
 
         self.channel.basic_consume(
             queue=self.callback_queue,
@@ -40,7 +41,7 @@ class Interacter:
             self.response = response.res
 
 
-    def call(self, n: int) -> int:
+    def call(self, n: int) -> int | None:
         self.response = None
         self.corr_id = str(uuid.uuid4())
 
@@ -68,7 +69,6 @@ class Interacter:
                 if waiting_time < 0: waiting_time = None
             except:
                 waiting_time = None
-            print('TIME IS', waiting_time)
             self.connection.process_data_events(time_limit=waiting_time)
         except pika.exceptions.AMQPError as e:
             logger.error(f"Error with message publishing: {e}")
