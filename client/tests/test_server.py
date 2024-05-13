@@ -10,7 +10,7 @@ import os
 import unittest
 from random import randint, seed
 
-from rabbitmq_client import proto
+# from rabbitmq_client import proto
 from rabbitmq_client.broker_interactions import Interacter
 
 class TestServer(unittest.TestCase):
@@ -25,11 +25,21 @@ class TestServer(unittest.TestCase):
 
         self.assertEqual(result, 2 * number)
 
-    def type_error_test(self) -> None:
+    def value_error_test(self) -> None:
         data = 'string'
         interacter = Interacter()
-        result = interacter.call(data)
-        print(result)
+        try:
+            result = interacter.call(data)
+        except Exception as e:
+            self.assertEqual(type(e), ValueError)
+
+    # def type_error_test(self) -> None:
+    #     data = 'string'
+    #     interacter = Interacter()
+    #     try:
+    #         result = interacter.call(data)
+    #     except Exception as e:
+    #         self.assertEqual(type(e), TypeError)
 
 print(__name__)
 if __name__ == '__main__':

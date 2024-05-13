@@ -3,7 +3,11 @@ from PyQt5.QtWidgets import QMessageBox
 from widgets import MainWindow
 from broker_interactions import Interacter
 
-from config import SERVER_ERROR_MESSAGE, ERROR_WINDOW_TITLE
+from config import SERVER_ERROR_MESSAGE, ERROR_WINDOW_TITLE, LOGGER_NAME
+
+from logger import get_logger
+
+logger = get_logger(LOGGER_NAME)
 
 class Controller:
     def __init__(self) -> None:
@@ -25,3 +29,6 @@ class Controller:
             mb.setIcon(QMessageBox.Critical)
             mb.setStandardButtons(QMessageBox.Ok)
             mb.exec()
+        except ValueError as ve:
+            logger.error(f"Invalid data: {ve}")
+            raise ve

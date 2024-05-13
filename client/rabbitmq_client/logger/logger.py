@@ -16,9 +16,10 @@ def get_stream_handler():
     stream_handler.setFormatter(logging.Formatter(FORMAT))
     return stream_handler
 
-def get_logger(logger_name) -> logging.Logger:
+def get_logger(logger_name: str) -> logging.Logger:
     logger = logging.getLogger(logger_name)
     logger.setLevel(LEVEL)
-    logger.addHandler(get_file_handler())
-    logger.addHandler(get_stream_handler())
+    if not logger.hasHandlers():
+        logger.addHandler(get_file_handler())
+        logger.addHandler(get_stream_handler())
     return logger
