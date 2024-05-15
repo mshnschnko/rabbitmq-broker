@@ -12,4 +12,7 @@ SERVER_QUEUE = app_config.get('server', 'queue')
 SERVER_ERROR_MESSAGE = app_config.get('error', 'server_error')
 ERROR_WINDOW_TITLE = app_config.get('error', 'server_error_title')
 
+REBOOT_WARNING_MESSAGE = app_config.get('reboot_warning', 'reboot_warning_msg')
+REBOOT_WARNING_TITLE = app_config.get('reboot_warning', 'reboot_warning_title')
+
 LOGGER_NAME = app_config.get('loggers', 'keys')
