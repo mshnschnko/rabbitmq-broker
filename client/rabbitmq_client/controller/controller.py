@@ -3,8 +3,7 @@ from PyQt5.QtWidgets import QMessageBox
 from widgets import MainWindow
 from broker_interactions import Interacter
 
-from config import SERVER_ERROR_MESSAGE, ERROR_WINDOW_TITLE, LOGGER_NAME
-
+from log_config import LOGGER_NAME
 from logger import get_logger
 
 logger = get_logger(LOGGER_NAME)
@@ -24,8 +23,8 @@ class Controller:
             result = ''
             self.main_window.set_response_number(str(result))
             mb = QMessageBox(self.main_window)
-            mb.setWindowTitle(ERROR_WINDOW_TITLE)
-            mb.setText(SERVER_ERROR_MESSAGE)
+            mb.setWindowTitle("Ошибка")
+            mb.setText("Не удалось связаться с сервером")
             mb.setIcon(QMessageBox.Critical)
             mb.setStandardButtons(QMessageBox.Ok)
             mb.exec()

@@ -1,59 +1,86 @@
-import sys
-import os
-import subprocess
+import re
 
-from PyQt5.QtWidgets import QWidget, QMessageBox
+from PyQt5.QtWidgets import QWidget, QFileDialog
+from PyQt5.QtCore import QRegularExpression, QDir, Qt, pyqtSignal
+from PyQt5.QtGui import QRegularExpressionValidator, QFontMetrics
 
 from ui.config_edit_window import Ui_Config_edit_window
 
-from config import REBOOT_WARNING_MESSAGE, REBOOT_WARNING_TITLE
-
-def restart():
-    python = sys.executable
-    os.execl(python, python, *sys.argv)
-
-def restart_with_venv():
-    venv_python = os.path.join(sys.prefix, 'bin', 'python')
-    if sys.platform.startswith('win'):
-        venv_python = os.path.join(sys.prefix, 'Scripts', 'python.exe')
-    subprocess.Popen([venv_python] + sys.argv)
-    sys.exit()
-
+from config import HOST, PORT, SERVER_QUEUE, WAITING_TIME
+from log_config import LEVEL, FILE_LEVEL, CONSOLE_LEVEL, FILENAME
 
 
 class ConfigEditor(QWidget):
-    def __init__(self, config_path: str, parent: QWidget | None = None) -> None:
+    settings_changed = pyqtSignal()
+
+    def __init__(self, app_config_path: str, logger_config_path: str, parent: QWidget | None = None) -> None:
         super().__init__(parent)
-        self.config_path = config_path
+        self.__app_config_path = app_config_path
+        self.__logger_config_path = logger_config_path
         
         self.ui = Ui_Config_edit_window()
         self.ui.setupUi(Config_edit_window=self)
 
-        self.set_current_config_text()
+
+        regex = QRegularExpression("^[1-9]+$")
+        validator = QRegularExpressionValidator(regex)
+        self.ui.time_limit_edit.setValidator(validator)
+
+        self.ui.logfile_name_label.setMinimumWidth(300)
+        self.ui.logfile_name_label.setWordWrap(False)
+        self.ui.logfile_name_label.setTextInteractionFlags(self.ui.logfile_name_label.textInteractionFlags() | Qt.TextSelectableByMouse)
+
+        self.set_current_settings_into_window()
+
+        self.ui.time_limit_checkbox.stateChanged.connect(self.on_time_limit_checkbox_state_changed)
+        self.ui.browse_logfile_btn.clicked.connect(self.on_browse_logfile_button_clicked)
         
         self.ui.cancel_btn.clicked.connect(lambda: self.close())
         self.ui.save_btn.clicked.connect(self.on_save_button_clicked)
 
-    def set_current_config_text(self) -> None:
-        with open(self.config_path, 'r') as confige_file:
-            text = confige_file.read()
-        self.ui.config_edit.setText(text)
+    def set_current_settings_into_window(self) -> None:
+        self.ui.host_ip_edit.setText(HOST)
+        self.ui.port_edit.setText(str(PORT))
+        self.ui.server_queue_edit.setText(SERVER_QUEUE)
+        self.ui.log_level_combobox.setCurrentText(LEVEL)
+        self.ui.logfile_name_label.setText(FILENAME)
+        self.ui.logfile_name_label.setToolTip(FILENAME)
+        self.elideText()
+        if WAITING_TIME != 'None':
+            self.ui.time_limit_edit.setText(WAITING_TIME)
+
+    def on_time_limit_checkbox_state_changed(self) -> None:
+        self.ui.time_limit_edit.setEnabled(self.ui.time_limit_checkbox.isChecked())
+        self.ui.time_limit_label.setEnabled(self.ui.time_limit_checkbox.isChecked())
+
+    def on_browse_logfile_button_clicked(self) -> None:
+        logfile_path, _ = QFileDialog.getOpenFileName(self, "Открыть файл", QDir.homePath(), "Log (*.log)")
+        if logfile_path:
+            self.ui.logfile_name_label.setText(logfile_path)
+            self.ui.logfile_name_label.setToolTip(logfile_path)
+            self.elideText()
+
+    def elideText(self):
+        metrics = QFontMetrics(self.ui.logfile_name_label.font())
+        elidedText = metrics.elidedText(self.ui.logfile_name_label.text(), Qt.ElideRight, self.ui.logfile_name_label.width())
+        self.ui.logfile_name_label.setText(elidedText)
 
     def on_save_button_clicked(self) -> None:
-        mb = QMessageBox(self)
-        mb.setWindowTitle(REBOOT_WARNING_TITLE)
-        mb.setText(REBOOT_WARNING_MESSAGE)
-        mb.setIcon(QMessageBox.Warning)
-        yes_btn = mb.addButton(QMessageBox.Yes)
-        yes_btn.setText('Да')
-        no_btn = mb.addButton(QMessageBox.No)
-        no_btn.setText('Нет')
-        result = mb.exec()
-        
-        if result == QMessageBox.Yes:
-            with open(self.config_path, 'w') as confige_file:
-                confige_file.write(self.ui.config_edit.toPlainText())
-            self.close()
-            restart_with_venv()
-        else:
-            self.close()
+        with open(self.__app_config_path, 'w') as app_confige_file:
+            app_confige_file.write('[broker]\n')
+            app_confige_file.write(f'host={self.ui.host_ip_edit.text()}\n')
+            app_confige_file.write(f'port={self.ui.port_edit.text()}\n')
+            app_confige_file.write(f'waiting_time={"None" if not self.ui.time_limit_checkbox.isChecked() else self.ui.time_limit_edit.text()}\n')
+            app_confige_file.write('\n[server]\n')
+            app_confige_file.write(f'queue={self.ui.server_queue_edit.text()}\n')
+
+        with open(self.__logger_config_path, 'r+') as logger_config_file:
+            data = logger_config_file.read()
+            print(self.ui.log_level_combobox.currentText())
+            data = re.sub(r'^level=.*$', f'level={self.ui.log_level_combobox.currentText()}', data, flags=re.MULTILINE)
+            data = re.sub(r'^file=.*$', f'file = {self.ui.logfile_name_label.text()}', data, flags=re.MULTILINE)
+            logger_config_file.seek(0)
+            logger_config_file.write(data)
+            logger_config_file.truncate()
+        self.close()
+

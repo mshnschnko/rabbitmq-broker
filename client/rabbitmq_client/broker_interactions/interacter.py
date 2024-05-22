@@ -3,7 +3,8 @@ import uuid
 
 import pika.exceptions
 from proto import Request, Response
-from config import HOST, PORT, SERVER_QUEUE, LOGGER_NAME, WAITING_TIME
+from config import HOST, PORT, SERVER_QUEUE, WAITING_TIME
+from log_config import LOGGER_NAME
 from logger import get_logger
 
 logger = get_logger(LOGGER_NAME)
