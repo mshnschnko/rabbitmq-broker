@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>200</height>
+    <height>250</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -20,7 +20,7 @@
       <x>40</x>
       <y>30</y>
       <width>322</width>
-      <height>141</height>
+      <height>201</height>
      </rect>
     </property>
     <layout class="QGridLayout" name="layout">
@@ -33,24 +33,17 @@
      <property name="verticalSpacing">
       <number>8</number>
      </property>
-     <item row="4" column="1">
-      <widget class="QPushButton" name="multiply_btn">
+     <item row="5" column="1">
+      <widget class="QLabel" name="multiplied_number_label">
        <property name="text">
-        <string>Удвоить</string>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="0">
-      <widget class="QLabel" name="number_label">
-       <property name="text">
-        <string>Число:</string>
+        <string/>
        </property>
        <property name="alignment">
         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
        </property>
       </widget>
      </item>
-     <item row="3" column="0">
+     <item row="5" column="0">
       <widget class="QLabel" name="miltiplied_label">
        <property name="text">
         <string>Удвоенное число:</string>
@@ -60,16 +53,51 @@
        </property>
       </widget>
      </item>
-     <item row="2" column="1">
-      <widget class="QLineEdit" name="number_line_edit"/>
-     </item>
-     <item row="3" column="1">
-      <widget class="QLabel" name="multiplied_number_label">
+     <item row="4" column="0">
+      <widget class="QLabel" name="number_label">
        <property name="text">
-        <string/>
+        <string>Число:</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="1">
+      <widget class="QLineEdit" name="number_line_edit">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <widget class="QLabel" name="server_label">
+       <property name="text">
+        <string>Сервер:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="6" column="1">
+      <widget class="QPushButton" name="multiply_btn">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="text">
+        <string>Удвоить</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="QLabel" name="address_label">
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1">
+      <widget class="QPushButton" name="connect_btn">
+       <property name="text">
+        <string>Подключиться</string>
        </property>
       </widget>
      </item>
