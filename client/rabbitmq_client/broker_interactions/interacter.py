@@ -3,21 +3,25 @@ import uuid
 
 import pika.exceptions
 from proto import Request, Response
-from config import HOST, PORT, SERVER_QUEUE, WAITING_TIME
-from log_config import LOGGER_NAME
+from config import Config
+from log_config import LogConfig
 from logger import get_logger
 
-logger = get_logger(LOGGER_NAME)
+config = Config()
+print('interacter conf', config)
+log_config = LogConfig()
+
+logger = get_logger(log_config.logger_name)
 
 class Interacter:
-    def __init__(self, host: str = HOST, port: str | int = PORT) -> None:
+    def __init__(self, host: str = config.host, port: str | int = config.port) -> None:
         logger.info("Connection opening...")
 
         self.connection = None
         self.connection = pika.BlockingConnection(pika.ConnectionParameters(host=host, port=port))
         logger.info("Connection opened")
         self.channel = self.connection.channel()
-        self.channel.queue_declare(queue=SERVER_QUEUE)
+        self.channel.queue_declare(queue=config.server_queue)
         logger.info(f"Server queue was declarated")
         result = self.channel.queue_declare(queue='', exclusive=True)
         self.callback_queue = result.method.queue
@@ -51,12 +55,12 @@ class Interacter:
         request.req = n
         serialized_message = request.SerializeToString()
 
-        logger.info(f"Sending request. Server queue: {SERVER_QUEUE}. Client queue: {self.callback_queue}. Request id: {request.id}. Content: {request.req}")
+        logger.info(f"Sending request. Server queue: {config.server_queue}. Client queue: {self.callback_queue}. Request id: {request.id}. Content: {request.req}")
 
         try:
             self.channel.basic_publish(
                 exchange='',
-                routing_key=SERVER_QUEUE,
+                routing_key=config.server_queue,
                 properties=pika.BasicProperties(
                     reply_to=self.callback_queue,
                     correlation_id=self.corr_id,
@@ -66,7 +70,7 @@ class Interacter:
             logger.info(f"Request was sent")
 
             try:
-                waiting_time = int(WAITING_TIME)
+                waiting_time = int(config.waiting_time)
                 if waiting_time < 0: waiting_time = None
             except:
                 waiting_time = None
@@ -78,6 +82,8 @@ class Interacter:
 
 
     def __del__(self) -> None:
+        print('__del')
         if self.connection:
+            print('__close')
             self.connection.close()
             logger.info("Connection closed")

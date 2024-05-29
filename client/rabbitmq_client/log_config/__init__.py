@@ -1,11 +1,23 @@
 import configparser
 
-log_config = configparser.ConfigParser()
-log_config.read('rabbitmq_client/logger.ini', 'utf8')
+class LogConfig:
+    __instance: 'LogConfig' = None
 
-LOGGER_NAME = log_config.get('loggers', 'keys')
-FILENAME = log_config.get('handler_logfile', 'file')
-FORMAT = log_config.get('formatter_logformatter', 'format', raw=True)
-LEVEL = log_config.get('logger_root', 'level')
-FILE_LEVEL = log_config.get('handler_logfile', 'level')
-CONSOLE_LEVEL = log_config.get('handler_logconsole', 'level')
+    def __new__(cls) -> 'LogConfig':
+        if cls.__instance is None:
+            cls.__instance = super().__new__(cls)
+        return cls.__instance
+    
+    def __init__(self) -> None:
+        self.read_config()
+
+    def read_config(self) -> None:
+        log_config = configparser.ConfigParser()
+        log_config.read('rabbitmq_client/logger.ini', 'utf8')
+
+        self.logger_name = log_config.get('loggers', 'keys')
+        self.filename = log_config.get('handler_logfile', 'file')
+        self.format = log_config.get('formatter_logformatter', 'format', raw=True)
+        self.level = log_config.get('logger_root', 'level')
+        self.file_level = log_config.get('handler_logfile', 'level')
+        self.console_level = log_config.get('handler_logconsole', 'level')

@@ -6,15 +6,20 @@ from PyQt5.QtGui import QRegularExpressionValidator, QFontMetrics
 
 from ui.config_edit_window import Ui_Config_edit_window
 
-from config import HOST, PORT, SERVER_QUEUE, WAITING_TIME
-from log_config import LEVEL, FILE_LEVEL, CONSOLE_LEVEL, FILENAME
+from config import Config
+from log_config import LogConfig
 
 
 class ConfigEditor(QWidget):
     settings_changed = pyqtSignal()
+    config = Config()
+    log_config = LogConfig()
 
     def __init__(self, app_config_path: str, logger_config_path: str, parent: QWidget | None = None) -> None:
         super().__init__(parent)
+
+        print('editor conf', self.config)
+
         self.__app_config_path = app_config_path
         self.__logger_config_path = logger_config_path
         
@@ -39,15 +44,15 @@ class ConfigEditor(QWidget):
         self.ui.save_btn.clicked.connect(self.on_save_button_clicked)
 
     def set_current_settings_into_window(self) -> None:
-        self.ui.host_ip_edit.setText(HOST)
-        self.ui.port_edit.setText(str(PORT))
-        self.ui.server_queue_edit.setText(SERVER_QUEUE)
-        self.ui.log_level_combobox.setCurrentText(LEVEL)
-        self.ui.logfile_name_label.setText(FILENAME)
-        self.ui.logfile_name_label.setToolTip(FILENAME)
+        self.ui.host_ip_edit.setText(self.config.host)
+        self.ui.port_edit.setText(str(self.config.port))
+        self.ui.server_queue_edit.setText(self.config.server_queue)
+        self.ui.log_level_combobox.setCurrentText(self.log_config.level)
+        self.ui.logfile_name_label.setText(self.log_config.filename)
+        self.ui.logfile_name_label.setToolTip(self.log_config.filename)
         self.elideText()
-        if WAITING_TIME != 'None':
-            self.ui.time_limit_edit.setText(WAITING_TIME)
+        if self.config.waiting_time != 'None':
+            self.ui.time_limit_edit.setText(self.config.waiting_time)
 
     def on_time_limit_checkbox_state_changed(self) -> None:
         self.ui.time_limit_edit.setEnabled(self.ui.time_limit_checkbox.isChecked())
@@ -82,5 +87,9 @@ class ConfigEditor(QWidget):
             logger_config_file.seek(0)
             logger_config_file.write(data)
             logger_config_file.truncate()
+
+        self.config.read_config()
+        self.log_config.read_config()
         self.close()
+        self.settings_changed.emit()
 
