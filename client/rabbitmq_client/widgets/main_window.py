@@ -17,7 +17,6 @@ class MainWindow(QMainWindow):
 
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
-        print('main window conf ', self.config)
         self.__is_connected = False
 
         self.ui = Ui_MainWindow()
@@ -65,12 +64,15 @@ class MainWindow(QMainWindow):
 
     def __on_settings_btn_clicked(self):
         config_editor = ConfigEditor('rabbitmq_client/app.ini', 'rabbitmq_client/logger.ini')
-        config_editor.settings_changed.connect(lambda: self.ui.address_label.setText(f'{self.config.host}:{self.config.port}'))
+        config_editor.settings_changed.connect(self.__on_settings_changed)
         config_editor.show()
 
     def __on_multiply_btn_clicked(self) -> None:
         self.multiply_btn_clicked.emit(self.ui.number_line_edit.text())
 
+    def __on_settings_changed(self):
+        self.ui.address_label.setText(f'{self.config.host}:{self.config.port}')
+        self.ui.connect_btn.click()
+
     def set_response_number(self, n: str) -> None:
         self.ui.multiplied_number_label.setText(n)
-        

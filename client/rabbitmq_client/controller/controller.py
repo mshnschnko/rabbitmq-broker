@@ -11,25 +11,21 @@ logger = get_logger(log_config.logger_name)
 
 class Controller:
     def __init__(self) -> None:
-        self.broker_interacter = None
+        self.broker_interacter = Interacter()
         self.main_window = MainWindow()
         self.main_window.server_connect.connect(self.__change_server_connection_status)
         self.main_window.multiply_btn_clicked.connect(self.__on_multiply_btn_clicked)
         self.main_window.show()
 
     def __change_server_connection_status(self, to_connect: bool) -> None:
-        print(to_connect)
         if to_connect:
             try:
-                self.broker_interacter = Interacter()
+                self.broker_interacter.connect()
                 self.main_window.connected_succesfully.emit(True)
             except:
                 self.main_window.connected_succesfully.emit(False)
         else:
-            print('else')
-            if self.broker_interacter:
-                print('del')
-                del self.broker_interacter
+            self.broker_interacter.disconnect()
 
     def __on_multiply_btn_clicked(self, number: str) -> None:
         try:

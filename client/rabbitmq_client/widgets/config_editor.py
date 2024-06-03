@@ -18,8 +18,6 @@ class ConfigEditor(QWidget):
     def __init__(self, app_config_path: str, logger_config_path: str, parent: QWidget | None = None) -> None:
         super().__init__(parent)
 
-        print('editor conf', self.config)
-
         self.__app_config_path = app_config_path
         self.__logger_config_path = logger_config_path
         
@@ -81,7 +79,6 @@ class ConfigEditor(QWidget):
 
         with open(self.__logger_config_path, 'r+') as logger_config_file:
             data = logger_config_file.read()
-            print(self.ui.log_level_combobox.currentText())
             data = re.sub(r'^level=.*$', f'level={self.ui.log_level_combobox.currentText()}', data, flags=re.MULTILINE)
             data = re.sub(r'^file=.*$', f'file = {self.ui.logfile_name_label.text()}', data, flags=re.MULTILINE)
             logger_config_file.seek(0)
