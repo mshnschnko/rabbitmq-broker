@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QMessageBox
 
-from widgets import MainWindow, ServerErrorMessageBox
+from widgets import MainWindow, ErrorMessageBox
 from broker_interactions import Interacter
 
 from log_config import LogConfig
@@ -32,10 +32,10 @@ class Controller:
             result = self.broker_interacter.call(int(number))
             self.main_window.set_response_number(str(result))
         except TypeError as te:
-            result = ''
-            self.main_window.set_response_number(str(result))
-            mb = ServerErrorMessageBox(self.main_window)
+            self.main_window.set_response_number('')
+            mb = ErrorMessageBox("Не удалось связаться с сервером", self.main_window)
             mb.exec()
         except ValueError as ve:
             logger.error(f"Invalid data: {ve}")
-            raise ve
+            mb = ErrorMessageBox("Неверное число", self.main_window)
+            mb.exec()

@@ -4,7 +4,7 @@ from PyQt5.QtGui import QRegularExpressionValidator
 
 from ui.main_window import Ui_MainWindow
 from . import ConfigEditor
-from . import ServerErrorMessageBox
+from . import ErrorMessageBox
 
 from config import Config
 
@@ -58,7 +58,7 @@ class MainWindow(QMainWindow):
             self.__is_connected = False
             self.ui.number_line_edit.setEnabled(False)
             self.ui.multiply_btn.setEnabled(False)
-            mb = ServerErrorMessageBox(self)
+            mb = ErrorMessageBox("Не удалось связаться с сервером", self)
             mb.exec()
 
 
