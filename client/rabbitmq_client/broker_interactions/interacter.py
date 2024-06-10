@@ -14,6 +14,7 @@ logger = get_logger(log_config.logger_name)
 class Interacter:
     def __init__(self, host: str | None = None, port: str | int | None = None) -> None:
         self.config = Config()
+        self.connection = None
 
 
     def connect(self, host: str | None = None, port: str | int | None = None) -> None:

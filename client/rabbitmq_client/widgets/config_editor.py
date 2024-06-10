@@ -34,8 +34,8 @@ class ConfigEditor(QWidget):
         self.ui.logfile_name_label.setTextInteractionFlags(self.ui.logfile_name_label.textInteractionFlags() | Qt.TextSelectableByMouse)
 
         self.set_current_settings_into_window()
-
         self.ui.time_limit_checkbox.stateChanged.connect(self.on_time_limit_checkbox_state_changed)
+
         self.ui.browse_logfile_btn.clicked.connect(self.on_browse_logfile_button_clicked)
         
         self.ui.cancel_btn.clicked.connect(lambda: self.close())
@@ -51,6 +51,11 @@ class ConfigEditor(QWidget):
         self.elideText()
         if self.config.waiting_time != 'None':
             self.ui.time_limit_edit.setText(self.config.waiting_time)
+            self.ui.time_limit_checkbox.setChecked(True)
+            self.ui.time_limit_edit.setEnabled(True)
+            self.ui.time_limit_label.setEnabled(True)
+        else:
+            self.ui.time_limit_checkbox.setChecked(False)
 
     def on_time_limit_checkbox_state_changed(self) -> None:
         self.ui.time_limit_edit.setEnabled(self.ui.time_limit_checkbox.isChecked())
@@ -69,24 +74,18 @@ class ConfigEditor(QWidget):
         self.ui.logfile_name_label.setText(elidedText)
 
     def on_save_button_clicked(self) -> None:
-        with open(self.__app_config_path, 'w') as app_confige_file:
-            app_confige_file.write('[broker]\n')
-            app_confige_file.write(f'host={self.ui.host_ip_edit.text()}\n')
-            app_confige_file.write(f'port={self.ui.port_edit.text()}\n')
-            app_confige_file.write(f'waiting_time={"None" if not self.ui.time_limit_checkbox.isChecked() else self.ui.time_limit_edit.text()}\n')
-            app_confige_file.write('\n[server]\n')
-            app_confige_file.write(f'queue={self.ui.server_queue_edit.text()}\n')
+        self.config.host = self.ui.host_ip_edit.text()
+        self.config.port = self.ui.port_edit.text()
+        self.config.server_queue = self.ui.server_queue_edit.text()
+        self.config.waiting_time = "None" if not self.ui.time_limit_checkbox.isChecked() or len(self.ui.time_limit_edit.text()) == 0 else self.ui.time_limit_edit.text()
 
-        with open(self.__logger_config_path, 'r+') as logger_config_file:
-            data = logger_config_file.read()
-            data = re.sub(r'^level=.*$', f'level={self.ui.log_level_combobox.currentText()}', data, flags=re.MULTILINE)
-            data = re.sub(r'^file=.*$', f'file = {self.ui.logfile_name_label.text()}', data, flags=re.MULTILINE)
-            logger_config_file.seek(0)
-            logger_config_file.write(data)
-            logger_config_file.truncate()
+        self.config.update_config_file()
 
-        self.config.read_config()
-        self.log_config.read_config()
+        self.log_config.level = self.ui.log_level_combobox.currentText()
+        self.log_config.filename = self.ui.logfile_name_label.text()
+
+        self.log_config.update_config_file()
+
         self.close()
         self.settings_changed.emit()
 

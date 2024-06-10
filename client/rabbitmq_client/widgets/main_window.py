@@ -72,7 +72,8 @@ class MainWindow(QMainWindow):
 
     def __on_settings_changed(self):
         self.ui.address_label.setText(f'{self.config.host}:{self.config.port}')
-        self.ui.connect_btn.click()
+        if self.__is_connected:
+            self.__connect_server()
 
     def set_response_number(self, n: str) -> None:
         self.ui.multiplied_number_label.setText(n)

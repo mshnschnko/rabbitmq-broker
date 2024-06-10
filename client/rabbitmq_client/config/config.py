@@ -19,3 +19,15 @@ class Config:
         self.port = app_config.get('broker', 'port')
         self.waiting_time = app_config.get('broker', 'waiting_time')
         self.server_queue = app_config.get('server', 'queue')
+
+    def update_config_file(self) -> None:
+        app_config = configparser.ConfigParser()
+        app_config.read('rabbitmq_client/app.ini', 'utf8')
+
+        app_config.set('broker', 'host', self.host)
+        app_config.set('broker', 'port', self.port)
+        app_config.set('broker', 'waiting_time', self.waiting_time)
+        app_config.set('server', 'queue', self.server_queue)
+
+        with open('rabbitmq_client/app.ini', 'w', encoding='utf8') as app_config_file:
+            app_config.write(app_config_file)

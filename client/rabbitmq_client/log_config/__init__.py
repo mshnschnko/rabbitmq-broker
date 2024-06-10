@@ -21,3 +21,13 @@ class LogConfig:
         self.level = log_config.get('logger_root', 'level')
         self.file_level = log_config.get('handler_logfile', 'level')
         self.console_level = log_config.get('handler_logconsole', 'level')
+
+    def update_config_file(self) -> None:
+        log_config = configparser.ConfigParser()
+        log_config.read('rabbitmq_client/logger.ini', 'utf8')
+
+        log_config.set('handler_logfile', 'file', self.filename)
+        log_config.set('logger_root', 'level', self.level)
+
+        with open('rabbitmq_client/logger.ini', 'w', encoding='utf8') as log_config_file:
+            log_config.write(log_config_file)
