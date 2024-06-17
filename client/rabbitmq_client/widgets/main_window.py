@@ -7,6 +7,7 @@ from . import ConfigEditor
 from . import ErrorMessageBox
 
 from config import Config
+from logger import Logger
 
 class MainWindow(QMainWindow):
     multiply_btn_clicked = pyqtSignal(str)
@@ -14,6 +15,7 @@ class MainWindow(QMainWindow):
     connected_succesfully = pyqtSignal(bool)
 
     config = Config()
+    logger = Logger()
 
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
@@ -61,6 +63,7 @@ class MainWindow(QMainWindow):
             self.__is_connected = False
             self.ui.number_line_edit.setEnabled(False)
             self.ui.multiply_btn.setEnabled(False)
+            self.logger.error("Failed to connect to the broker server")
             mb = ErrorMessageBox("Не удалось связаться с сервером", self)
             mb.exec()
 

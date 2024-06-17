@@ -5,10 +5,10 @@ from broker_interactions import Interacter
 
 from logger import Logger
 
-logger = Logger()
 
 class Controller:
     def __init__(self) -> None:
+        self.logger = Logger()
         self.broker_interacter = Interacter()
         self.main_window = MainWindow()
         self.main_window.server_connect.connect(self.__change_server_connection_status)
@@ -30,11 +30,11 @@ class Controller:
             result = self.broker_interacter.call(int(number))
             self.main_window.set_response_number(str(result))
         except TypeError as te:
-            logger.error(f"Failed to connect to server")
+            self.logger.error(f"Failed to connect to the backend server")
             self.main_window.set_response_number('')
             mb = ErrorMessageBox("Не удалось связаться с сервером", self.main_window)
             mb.exec()
         except ValueError as ve:
-            logger.error(f"Invalid data: {ve}")
+            self.logger.error(f"Invalid data: {ve}")
             mb = ErrorMessageBox("Неверное число", self.main_window)
             mb.exec()

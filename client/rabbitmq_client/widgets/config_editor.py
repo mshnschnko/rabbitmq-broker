@@ -18,7 +18,8 @@ class ConfigEditor(QDialog):
 
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
-        
+        self.logfile_path = None
+
         self.ui = Ui_Config_edit_window()
         self.ui.setupUi(Config_edit_window=self)
 
@@ -60,10 +61,10 @@ class ConfigEditor(QDialog):
         self.ui.time_limit_label.setEnabled(self.ui.time_limit_checkbox.isChecked())
 
     def on_browse_logfile_button_clicked(self) -> None:
-        logfile_path, _ = QFileDialog.getOpenFileName(self, "Открыть файл", QDir.homePath(), "Log (*.log)")
-        if logfile_path:
-            self.ui.logfile_name_label.setText(logfile_path)
-            self.ui.logfile_name_label.setToolTip(logfile_path)
+        self.logfile_path, _ = QFileDialog.getOpenFileName(self, "Открыть файл", QDir.homePath(), "Log (*.log)")
+        if self.logfile_path:
+            self.ui.logfile_name_label.setText(self.logfile_path)
+            self.ui.logfile_name_label.setToolTip(self.logfile_path)
             self.elideText()
 
     def elideText(self):
@@ -80,7 +81,7 @@ class ConfigEditor(QDialog):
         self.config.update_config_file()
 
         self.log_config.level = self.ui.log_level_combobox.currentText()
-        self.log_config.filename = self.ui.logfile_name_label.text()
+        self.log_config.filename = self.logfile_path
 
         self.log_config.update_config_file()
         logger = Logger()

@@ -36,6 +36,11 @@ class Logger:
             logger.addHandler(self.__get_stream_handler())
         return logger
 
+    def __remove_all_handlers(self):
+        handlers = self.__logger.handlers[:]
+        for handler in handlers:
+            self.__logger.removeHandler(handler)
+
     def info(self, message: str) -> None:
         self.__logger.info(message)
 
@@ -46,4 +51,5 @@ class Logger:
         self.__logger.error(message)
 
     def update_config(self) -> None:
+        self.__remove_all_handlers()
         self.__logger = self.__get_logger(self.__log_config.logger_name)
