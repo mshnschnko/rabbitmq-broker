@@ -1,6 +1,6 @@
 import re
 
-from PyQt5.QtWidgets import QWidget, QFileDialog
+from PyQt5.QtWidgets import QWidget, QFileDialog, QDialog
 from PyQt5.QtCore import QRegularExpression, QDir, Qt, pyqtSignal
 from PyQt5.QtGui import QRegularExpressionValidator, QFontMetrics
 
@@ -8,18 +8,16 @@ from ui.config_edit_window import Ui_Config_edit_window
 
 from config import Config
 from log_config import LogConfig
+from logger import Logger
 
 
-class ConfigEditor(QWidget):
+class ConfigEditor(QDialog):
     settings_changed = pyqtSignal()
     config = Config()
     log_config = LogConfig()
 
-    def __init__(self, app_config_path: str, logger_config_path: str, parent: QWidget | None = None) -> None:
+    def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
-
-        self.__app_config_path = app_config_path
-        self.__logger_config_path = logger_config_path
         
         self.ui = Ui_Config_edit_window()
         self.ui.setupUi(Config_edit_window=self)
@@ -85,6 +83,8 @@ class ConfigEditor(QWidget):
         self.log_config.filename = self.ui.logfile_name_label.text()
 
         self.log_config.update_config_file()
+        logger = Logger()
+        logger.update_config()
 
         self.close()
         self.settings_changed.emit()

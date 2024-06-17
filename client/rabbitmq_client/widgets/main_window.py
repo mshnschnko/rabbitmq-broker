@@ -36,6 +36,9 @@ class MainWindow(QMainWindow):
         self.ui.multiply_btn.clicked.connect(self.__on_multiply_btn_clicked)
         self.connected_succesfully.connect(self.__on_connected)
 
+        self.config_editor = ConfigEditor(parent=self)
+        self.config_editor.settings_changed.connect(self.__on_settings_changed)
+
     def __connect_server(self) -> None:
         if self.__is_connected:
             self.ui.connect_btn.setText("Подключиться")
@@ -63,9 +66,7 @@ class MainWindow(QMainWindow):
 
 
     def __on_settings_btn_clicked(self):
-        config_editor = ConfigEditor('rabbitmq_client/app.ini', 'rabbitmq_client/logger.ini')
-        config_editor.settings_changed.connect(self.__on_settings_changed)
-        config_editor.show()
+        self.config_editor.exec()
 
     def __on_multiply_btn_clicked(self) -> None:
         self.multiply_btn_clicked.emit(self.ui.number_line_edit.text())

@@ -4,12 +4,10 @@ import uuid
 import pika.exceptions
 from proto import Request, Response
 from config import Config
-from log_config import LogConfig
-from logger import get_logger
+from logger import Logger
 
 
-log_config = LogConfig()
-logger = get_logger(log_config.logger_name)
+logger = Logger()
 
 class Interacter:
     def __init__(self, host: str | None = None, port: str | int | None = None) -> None:

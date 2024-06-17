@@ -3,11 +3,9 @@ from PyQt5.QtWidgets import QMessageBox
 from widgets import MainWindow, ErrorMessageBox
 from broker_interactions import Interacter
 
-from log_config import LogConfig
-from logger import get_logger
+from logger import Logger
 
-log_config = LogConfig()
-logger = get_logger(log_config.logger_name)
+logger = Logger()
 
 class Controller:
     def __init__(self) -> None:
@@ -32,6 +30,7 @@ class Controller:
             result = self.broker_interacter.call(int(number))
             self.main_window.set_response_number(str(result))
         except TypeError as te:
+            logger.error(f"Failed to connect to server")
             self.main_window.set_response_number('')
             mb = ErrorMessageBox("Не удалось связаться с сервером", self.main_window)
             mb.exec()
