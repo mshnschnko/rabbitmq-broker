@@ -1,5 +1,3 @@
-import re
-
 from PyQt5.QtWidgets import QWidget, QFileDialog, QDialog
 from PyQt5.QtCore import QRegularExpression, QDir, Qt, pyqtSignal
 from PyQt5.QtGui import QRegularExpressionValidator, QFontMetrics
@@ -48,7 +46,7 @@ class ConfigEditor(QDialog):
         self.ui.logfile_name_label.setText(self.log_config.filename)
         self.ui.logfile_name_label.setToolTip(self.log_config.filename)
         self.elideText()
-        if self.config.waiting_time != 'None':
+        if self.config.waiting_time != "None":
             self.ui.time_limit_edit.setText(self.config.waiting_time)
             self.ui.time_limit_checkbox.setChecked(True)
             self.ui.time_limit_edit.setEnabled(True)
@@ -61,11 +59,14 @@ class ConfigEditor(QDialog):
         self.ui.time_limit_label.setEnabled(self.ui.time_limit_checkbox.isChecked())
 
     def on_browse_logfile_button_clicked(self) -> None:
-        self.logfile_path, _ = QFileDialog.getOpenFileName(self, "Открыть файл", QDir.homePath(), "Log (*.log)")
-        if self.logfile_path:
+        logfile_path, _ = QFileDialog.getSaveFileName(self, "Открыть файл", QDir.homePath(), "Log (*.log)")
+        if logfile_path:
+            self.logfile_path = logfile_path
             self.ui.logfile_name_label.setText(self.logfile_path)
             self.ui.logfile_name_label.setToolTip(self.logfile_path)
             self.elideText()
+        else:
+            self.logfile_path = None
 
     def elideText(self):
         metrics = QFontMetrics(self.ui.logfile_name_label.font())
@@ -81,7 +82,8 @@ class ConfigEditor(QDialog):
         self.config.update_config_file()
 
         self.log_config.level = self.ui.log_level_combobox.currentText()
-        self.log_config.filename = self.logfile_path
+        if self.logfile_path:
+            self.log_config.filename = self.logfile_path
 
         self.log_config.update_config_file()
         logger = Logger()
