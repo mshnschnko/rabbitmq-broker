@@ -35,7 +35,7 @@ class ConfigEditor(QDialog):
 
         self.ui.browse_logfile_btn.clicked.connect(self.on_browse_logfile_button_clicked)
         
-        self.ui.cancel_btn.clicked.connect(lambda: self.close())
+        self.ui.cancel_btn.clicked.connect(self.on_cancel_button_clicked)
         self.ui.save_btn.clicked.connect(self.on_save_button_clicked)
 
     def set_current_settings_into_window(self) -> None:
@@ -45,6 +45,7 @@ class ConfigEditor(QDialog):
         self.ui.log_level_combobox.setCurrentText(self.log_config.level)
         self.ui.logfile_name_label.setText(self.log_config.filename)
         self.ui.logfile_name_label.setToolTip(self.log_config.filename)
+        self.ui.username_edit.setText(self.config.username)
         self.elideText()
         if self.config.waiting_time != "None":
             self.ui.time_limit_edit.setText(self.config.waiting_time)
@@ -73,11 +74,23 @@ class ConfigEditor(QDialog):
         elidedText = metrics.elidedText(self.ui.logfile_name_label.text(), Qt.ElideRight, self.ui.logfile_name_label.width())
         self.ui.logfile_name_label.setText(elidedText)
 
+    def on_cancel_button_clicked(self) -> None:
+        self.ui.password_edit.setText('')
+        self.close()
+
     def on_save_button_clicked(self) -> None:
-        self.config.host = self.ui.host_ip_edit.text()
-        self.config.port = self.ui.port_edit.text()
-        self.config.server_queue = self.ui.server_queue_edit.text()
+        if self.ui.host_ip_edit.text():
+            self.config.host = self.ui.host_ip_edit.text()
+        if self.ui.port_edit.text():
+            self.config.port = self.ui.port_edit.text()
+        if self.ui.server_queue_edit.text():
+            self.config.server_queue = self.ui.server_queue_edit.text()
         self.config.waiting_time = "None" if not self.ui.time_limit_checkbox.isChecked() or len(self.ui.time_limit_edit.text()) == 0 else self.ui.time_limit_edit.text()
+        if self.ui.username_edit.text():
+            self.config.username = self.ui.username_edit.text()
+        if self.ui.password_edit.text():
+            self.config.password = self.ui.password_edit.text()
+            self.ui.password_edit.setText('')
 
         self.config.update_config_file()
 

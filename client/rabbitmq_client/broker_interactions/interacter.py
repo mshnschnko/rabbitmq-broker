@@ -19,7 +19,12 @@ class Interacter:
         self.logger.info("Connection opening...")
 
         self.connection = None
-        self.connection = pika.BlockingConnection(pika.ConnectionParameters(host=host, port=port))
+
+        credentials = pika.PlainCredentials(username=self.config.username,
+                                            password=self.config.password)
+        self.connection = pika.BlockingConnection(pika.ConnectionParameters(host=host,
+                                                                            port=port,
+                                                                            credentials=credentials))
         self.logger.info("Connection opened")
         self.channel = self.connection.channel()
         self.channel.queue_declare(queue=self.config.server_queue)
